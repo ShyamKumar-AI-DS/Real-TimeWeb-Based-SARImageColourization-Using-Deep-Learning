@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAR Image Colorization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <video autoplay muted loop class="video-bg">
+        <source src="{{ url_for('static', filename='1851190-uhd_3840_2160_25fps.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="container">
+        <h1>SAR to Optical Image Colorization</h1>
+        <input type="file" id="fileInput">
+        <button onclick="uploadImage()">Convert</button>
+        <h2>Output:</h2>
+        <img id="outputImage" style="max-width: 500px;"/>
+    </div>
+
+    <script>
+        async function uploadImage() {
+            let file = document.getElementById('fileInput').files[0];
+            let formData = new FormData();
+            formData.append('image', file);
+
+            let response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                alert("Error processing image");
+                return;
+            }
+
+            let blob = await response.blob();
+            let url = URL.createObjectURL(blob);
+            document.getElementById('outputImage').src = url;
+        }
+    </script>
+</body>
+</html>
